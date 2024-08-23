@@ -11,18 +11,20 @@ seccomp=1
 # To use bridge networking add: --network-bridge=br1 --resolv-conf=bind-host
 # Ensure to change eno1/br1 to the interface name you want to use
 # To allow syscalls required by docker add: --system-call-filter='add_key keyctl bpf'
-systemd_nspawn_user_args=
+systemd_nspawn_user_args=--network-bridge=br0
+        --resolv-conf=bind-host
+        --system-call-filter='add_key keyctl bpf'
 
 # Specify command/script to run on the HOST before starting the jail
 # For example to load kernel modules and config kernel settings
 pre_start_hook=
-# pre_start_hook=#!/usr/bin/bash
-#     set -euo pipefail
-#     echo 'PRE_START_HOOK_EXAMPLE'
-#     echo 1 > /proc/sys/net/ipv4/ip_forward
-#     modprobe br_netfilter
-#     echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
-#     echo 1 > /proc/sys/net/bridge/bridge-nf-call-ip6tables
+ pre_start_hook=#!/usr/bin/bash
+     set -euo pipefail
+     echo 'PRE_START_HOOK_EXAMPLE'
+     echo 1 > /proc/sys/net/ipv4/ip_forward
+     modprobe br_netfilter
+     echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
+     echo 1 > /proc/sys/net/bridge/bridge-nf-call-ip6tables
 
 # Specify command/script to run on the HOST after starting the jail
 # For example to attach to multiple bridge interfaces
@@ -44,7 +46,25 @@ release=jammy
 
 # Specify command/script to run IN THE JAIL on the first start (once networking is ready in the jail)
 # Useful to install packages on top of the base rootfs
-initial_setup=
+initial_setup=#!/usr/bin/bash
+    set -euo pipefail
+    echo 'INITIAL_SETUP_EXAMPLE'
+    apt-get update
+    apt-get -y upgrade
+    apt-get -y install python3 wget sudo
+
+    # create a user
+        useradd -m -s /bin/bash frappe
+        echo "frappe:frappe" | chpasswd
+        usermod -aG sudo frappe
+        
+        # download easy install script
+        wget wget https://raw.githubusercontent.com/frappe/bench/develop/easy-install.py
+        sudo -H -u frappe python3 easy-install.py --production --user frappe --email test@test.com --password frappe
+        
+
+
+
 # initial_setup=bash -c 'apt-get update && apt-get -y upgrade'
 
 # Usually no need to change systemd_run_default_args
