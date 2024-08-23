@@ -59,6 +59,14 @@ initial_setup=#!/usr/bin/bash
 
         # download frappe easy install script in /home/frappe
         wget https://raw.githubusercontent.com/frappe/bench/develop/easy-install.py -P /home/frappe
+        # change ownership of the file to frappe
+        chown frappe:frappe /home/frappe/easy-install.py
+        # write script to run easy install
+        echo "sudo python3 /home/frappe/easy-install.py --prod --s site1.test --email admin@change.com" > /home/frappe/install.sh
+        # change ownership of the file to frappe
+        chown frappe:frappe /home/frappe/install.sh
+        # make the script executable
+        chmod +x /home/frappe/install.sh
 
 
 # initial_setup=bash -c 'apt-get update && apt-get -y upgrade'
