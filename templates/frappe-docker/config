@@ -50,18 +50,15 @@ initial_setup=#!/usr/bin/bash
     echo 'INITIAL_SETUP_EXAMPLE'
     apt-get update
     apt-get -y upgrade
-    apt-get -y install python3 wget sudo
+    apt-get -y install python3 wget sudo curl
 
     # create a user
         useradd -m -s /bin/bash frappe
         echo "frappe:frappe" | chpasswd
         usermod -aG sudo frappe
-        
-        # download easy install script
-        wget wget https://raw.githubusercontent.com/frappe/bench/develop/easy-install.py
-        sudo -H -u frappe python3 easy-install.py --production --user frappe --email test@test.com --password frappe
-        
 
+        # download frappe easy install script in /home/frappe
+        wget https://raw.githubusercontent.com/frappe/bench/develop/easy-install.py -P /home/frappe
 
 
 # initial_setup=bash -c 'apt-get update && apt-get -y upgrade'
