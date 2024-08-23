@@ -17,8 +17,7 @@ systemd_nspawn_user_args=--network-bridge=br0
 
 # Specify command/script to run on the HOST before starting the jail
 # For example to load kernel modules and config kernel settings
-pre_start_hook=
- pre_start_hook=#!/usr/bin/bash
+pre_start_hook=#!/usr/bin/bash
      set -euo pipefail
      echo 'PRE_START_HOOK_EXAMPLE'
      echo 1 > /proc/sys/net/ipv4/ip_forward
